@@ -15,16 +15,13 @@ argv = yargs
   .help()
   .alias("help", "h").argv;
 
-location.location(argv.address, (error, result) => {
-  if (error) console.log(error);
-  else if (result) {
-    const location = result;
-    weather.weather(result.location, (error, result) => {
-      if (error) console.log(error);
-      else if (result) {
-        console.log(`Results for location: ${location.formatted_address}`);
-        console.log(`${result}°C`);
-      }
-    });
-  }
-});
+location
+  .location(argv.address)
+  .then(data => weather.weather(data))
+  .then(({ temperature, address }) => {
+    console.log(`Results for location: ${address}`);
+    console.log(`${temperature}°C`);
+  })
+  .catch(error => {
+    console.log(error);
+  });

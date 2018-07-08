@@ -1,19 +1,41 @@
 const express = require("express");
+const hbs = require("hbs");
 
 let app = express();
 
+const port = process.env.PORT || 3000;
+
+hbs.registerPartials(__dirname + "/views/partials");
+app.set("view engine", "hbs");
+
+app.use((req, res, next) => {
+  const now = new Date().toString();
+  
+  console.log(`${now} ${req.method} ${req.url}`);
+  next();
+});
+
+// app.use((req, res, next)=>{
+//   res.render('maintenance.hbs');
+// })
+
 app.use(express.static(__dirname + "/public"));
 
+hbs.registerHelper("getFullYear", () => new Date().getFullYear());
+
+hbs.registerHelper("screamIt", text => text.toUpperCase());
+
 app.get("/", (req, res) => {
-  // res.send('<h1>Hello world</h1>');
-  res.send({
-    name: "Saurabh Thakur",
-    arr: [1, 3, 4]
+  res.render("home.hbs", {
+    pageTitle: "Home Page",
+    welcomeMessage: "Welcome to Express"
   });
 });
 
 app.get("/about", (req, res) => {
-  res.send("About page");
+  res.render("about.hbs", {
+    pageTitle: "About Page"
+  });
 });
 
 app.get("/bad", (req, res) => {
@@ -22,6 +44,6 @@ app.get("/bad", (req, res) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log("Server is up on port 3000");
+app.listen(port, () => {
+  console.log(`Server is up on port ${port}`);
 });

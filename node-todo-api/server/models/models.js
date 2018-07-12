@@ -85,7 +85,7 @@ UserSchema.pre("save", function(next) {
   } else {
     next();
   }
-});
+}); 
 
 const Todo = mongoose.model("todo", {
   text: {

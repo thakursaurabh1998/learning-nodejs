@@ -71,6 +71,21 @@ UserSchema.statics.findByToken = function(token) {
   });
 };
 
+UserSchema.statics.findByCredentials = function(email, password) {
+  const User = this;
+
+  User.findOne({ email }).then(user => {
+    if (!user) return Promise.reject();
+
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(password, this.password, (err, result) => {
+        if (result) resolve(user);
+        reject();
+      });
+    });
+  });
+};
+
 UserSchema.pre("save", function(next) {
   const user = this;
 
@@ -85,7 +100,7 @@ UserSchema.pre("save", function(next) {
   } else {
     next();
   }
-}); 
+});
 
 const Todo = mongoose.model("todo", {
   text: {
